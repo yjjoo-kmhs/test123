@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주간스케치 - 주간교육활동 간편 작성 도구</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --border-light: #e2e8f0;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "맑은 고딕", sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-light);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      font-weight: 800;
+      font-size: 1.15rem;
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .brand-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+
+    .status-tag {
+      background: var(--success-light);
+      color: var(--success);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-weight: 600;
+      border: 1px solid #bbf7d0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-tag::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+    }
+
+    /* Card styling */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+
+    /* Search & Selector Toolbar */
+    .selector-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrap {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .chips-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .example-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .chip-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .chip-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Mobile View Toggle Tabs (Visible on small screens) */
+    .mobile-tab-bar {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mobile-tab-btn {
+      padding: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+    }
+
+    .mobile-tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Main Split Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.78rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-page);
+      border-color: var(--text-muted);
+    }
+
+    .btn-success {
+      background: #15803d;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #166534;
+    }
+
+    .btn-copy-all {
+      background: #0284c7;
+      color: white;
+    }
+    .btn-copy-all:hover {
+      background: #0369a1;
+    }
+
+    /* Day Accordion / Card Style */
+    .day-block {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .day-block-header {
+      background: #f1f5f9;
+      padding: 8px 14px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .period-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .period-item {
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s ease;
+    }
+
+    .period-item:last-child {
+      border-bottom: none;
+    }
+
+    .period-item:hover {
+      background: #f8fafc;
+    }
+
+    .period-badge {
+      background: #e2e8f0;
+      color: #475569;
+      font-weight: 700;
+      font-size: 0.76rem;
+      padding: 3px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      min-width: 44px;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .period-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .subject-name {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    .activity-text {
+      font-size: 0.86rem;
+      color: #334155;
+      word-break: keep-all;
+    }
+
+    .notes-text {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Editable Fields on Right Column */
+    .edit-period-item {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #ffffff;
+    }
+
+    .edit-period-item:last-child {
+      border-bottom: none;
+    }
+
+    .edit-row-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .edit-subject-input {
+      width: 100px;
+      padding: 5px 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+
+    .edit-subject-input:focus {
+      border-color: var(--primary);
+    }
+
+    .edit-activity-input {
+      width: 100%;
+      padding: 6px 10px;
+      font-size: 0.88rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+
+    .edit-activity-input:focus {
+      border-color: var(--primary);
+    }
+
+    .edit-notes-input {
+      width: 100%;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      color: #475569;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+
+    /* Target Export Table View Modal / Inline Preview */
+    .preview-table-box {
+      margin-top: 16px;
+      border-top: 1px solid var(--border-light);
+      padding-top: 14px;
+    }
+
+    .preview-table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+    .preview-table th, .preview-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 6px;
+      vertical-align: middle;
+    }
+
+    .preview-table th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .preview-table td.period-label {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+      width: 58px;
+    }
+
+    /* Multi-teacher Input Section Mockup */
+    .mockup-section {
+      background: #fdfefe;
+      border: 1.5px dashed #93c5fd;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .mockup-badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+
+    .mockup-card {
+      background: white;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .mockup-card-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 110;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 480px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      transform: scale(0.95);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* Mobile Responsive Breakpoints */
+    @media (max-width: 960px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+      .mobile-tab-bar {
+        display: grid;
+      }
+      .panel-col {
+        display: none;
+      }
+      .panel-col.active {
+        display: block;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+      header {
+        padding: 12px 14px;
+      }
+      .brand-title {
+        font-size: 1.1rem;
+      }
+      .search-input-wrap {
+        min-width: 100%;
+      }
+      .btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo-badge">주간스케치</div>
+        <div>
+          <div class="brand-title">주간교육활동 간편 작성 도구</div>
+          <div class="brand-desc">작년 교육계획을 조회·비교하고 올해 계획을 원클릭으로 완성하세요</div>
+        </div>
+      </div>
+      <div class="header-status">
+        <span class="status-tag" id="saveIndicator">브라우저 로컬 저장 활성</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. Search & Example Selector Card -->
+    <section class="card selector-bar">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="작년 계획 검색 (예: 봄, 덧셈, 고장, 분수, 식물, 약수 등)...">
+        </div>
+        <button class="btn btn-outline" id="resetSearchBtn">검색 초기화</button>
+      </div>
+
+      <div>
+        <div class="chips-label">📌 가상 예시 데이터 5건 바로가기 (클릭하여 불러오기):</div>
+        <div class="example-chips" id="chipsContainer">
+          <!-- Dynamically filled with 5 examples -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile Screen Switch Tabs -->
+    <div class="mobile-tab-bar">
+      <button class="mobile-tab-btn active" id="tabBtnLeft" onclick="switchMobileTab('left')">
+        👀 작년 계획 조회
+      </button>
+      <button class="mobile-tab-btn" id="tabBtnRight" onclick="switchMobileTab('right')">
+        ✏️ 올해 계획 작성
+      </button>
+    </div>
+
+    <!-- 2. Main Workspace (Split Comparison View) -->
+    <div class="workspace-grid">
+
+      <!-- LEFT COLUMN: Last Year Reference Data -->
+      <section class="card panel-col active" id="leftPanel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <span>📅 작년 주간교육활동 (참고용)</span>
+            </div>
+            <div class="panel-subtitle" id="leftPlanMeta">불러오는 중...</div>
+          </div>
+          <button class="btn btn-copy-all" id="copyAllToRightBtn" title="작년 모든 교시의 내용을 오른쪽 작성란으로 일괄 복사합니다">
+            👉 전체 올해 칸으로 불러오기
+          </button>
+        </div>
+
+        <div id="leftPlanContainer">
+          <!-- Dynamically populated periods grouped by day -->
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: This Year Editor -->
+      <section class="card panel-col active" id="rightPanel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <span>✏️ 올해 주간교육활동 작성란</span>
+            </div>
+            <div class="panel-subtitle">수정 즉시 브라우저에 자동 저장됩니다</div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button class="btn btn-outline btn-sm" id="clearEditorBtn" title="올해 작성란을 깨끗이 비웁니다">
+              비우기
+            </button>
+            <button class="btn btn-primary" id="copyHwpBtn" title="한글(HWP) 및 나이스(NEIS)에 표 형태로 붙여넣을 수 있게 복사합니다">
+              📋 한글/나이스용 표 복사
+            </button>
+            <button class="btn btn-success" id="copyExcelBtn" title="엑셀(Excel)에 셀 단위로 깔끔하게 붙여넣을 수 있게 복사합니다">
+              📑 엑셀용 복사 (TSV)
+            </button>
+          </div>
+        </div>
+
+        <!-- Weekly Plan Info (Title, Week Date) -->
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+          <input type="text" id="curYearTitle" class="edit-activity-input" style="flex: 2; min-width: 180px; font-weight: 700;" value="2026학년도 1학기 주간교육활동">
+          <input type="text" id="curYearDateRange" class="edit-activity-input" style="flex: 1; min-width: 140px;" value="2026.03.16. ~ 03.20.">
+        </div>
+
+        <!-- Editable day-by-day blocks -->
+        <div id="rightPlanContainer">
+          <!-- Dynamically generated editable fields -->
+        </div>
+
+        <!-- Live Export Table Preview -->
+        <div class="preview-table-box">
+          <div class="preview-table-header">
+            <span style="font-size: 0.88rem; font-weight: 700; color: #334155;">📊 출력 및 복사 미리보기 (표 형태)</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">복사 시 아래 표 그대로 복사됩니다</span>
+          </div>
+          <div class="table-responsive">
+            <table class="preview-table" id="exportTable">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">교시</th>
+                  <th>월요일</th>
+                  <th>화요일</th>
+                  <th>수요일</th>
+                  <th>목요일</th>
+                  <th>금요일</th>
+                </tr>
+              </thead>
+              <tbody id="exportTableBody">
+                <!-- Dynamically generated from right editor data -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- 3. Multi-teacher Input Mockup (UI Preview for whole school) -->
+    <section class="mockup-section">
+      <div class="mockup-badge">👥 학교 전체 교원 협업용 입력 화면 예시 (UI 목업)</div>
+      <h3 style="font-size: 1.05rem; font-weight: 700; color: #1e3a8a; margin-bottom: 6px;">
+        동학년 및 교과 전담 교원 공동 입력 화면
+      </h3>
+      <p style="font-size: 0.85rem; color: #475569;">
+        여러 학년/학급의 선생님들이 각자의 교과 진도를 입력하여 주간교육활동에 취합할 수 있는 입력 양식 예시입니다.
+      </p>
+
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-card-title">
+            <span>1반 담임 (홍길동 교사)</span>
+            <span style="font-size: 0.72rem; color: var(--success); font-weight: 600;">입력 완료</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">국어, 수학, 봄/가을 기초 진도 입력</div>
+          <input type="text" class="edit-activity-input" style="font-size: 0.8rem;" value="국어 1~2단원 단원평가 준비물 안내" readonly>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-card-title">
+            <span>체육 전담 (김체육 교사)</span>
+            <span style="font-size: 0.72rem; color: #2563eb; font-weight: 600;">작성 중</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">3·4교시 강당 체육활동 일정 배정</div>
+          <input type="text" class="edit-activity-input" style="font-size: 0.8rem;" placeholder="체육 진도 및 강당 이용 계획 입력...">
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-card-title">
+            <span>영어/음악 전담 (이예능 교사)</span>
+            <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">미입력</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px;">전담 교과 차시별 학습자료 공유</div>
+          <input type="text" class="edit-activity-input" style="font-size: 0.8rem;" placeholder="차시별 준비물 입력...">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="font-size: 0.8rem; color: #64748b;">※ 다인원 동시 편집 및 중앙 저장은 차기 버전(서버/스프레드시트 연동) 과제입니다.</span>
+        <button class="btn btn-outline" onclick="openCollaborativeNotice()">
+          ☁️ 학년 주간계획에 공동 저장하기
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal Notice for Future Server Collaborative Save -->
+  <div class="modal-overlay" id="noticeModal">
+    <div class="modal-box">
+      <div class="modal-title">💡 공동 저장 기능 안내 (차기 예정)</div>
+      <div class="modal-body">
+        현재 버전은 <strong>단일 파일(index.html)</strong>로 로컬 컴퓨터에서 즉시 실행되는 1차 프로토타입입니다.<br><br>
+        여러 선생님이 동시에 작성하고 실시간으로 한곳에 취합하는 기능은 기획서에 따라 <strong>'다음에 할 일(구글 시트 / 클라우드 DB 연동)'</strong>으로 분류되어 있습니다.<br><br>
+        지금 버전에서는 <strong>개인 로컬 자동 저장</strong>과 <strong>한글/엑셀/나이스 클립보드 원클릭 복사</strong>를 완전히 지원합니다.
+      </div>
+      <div style="text-align: right;">
+        <button class="btn btn-primary" onclick="closeCollaborativeNotice()">확인했습니다</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Alert -->
+  <div id="toast">✅ 복사되었습니다!</div>
+
+  <script>
+    /* =====================================================================
+       1. 5 Realistic Virtual Educational Activity Plans (작년 가상 데이터 5건)
+       ===================================================================== */
+    const DUMMY_PLANS = [
+      {
+        id: "plan-1",
+        grade: "1학년",
+        title: "1학년 1학기 3주차 (봄을 맞이해요)",
+        periodRange: "작년 3월 3주차 (03.17~03.21)",
+        days: [
+          {
+            dayName: "월요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "바른 자세로 낱말 또박또박 읽기", notes: "국 12-15쪽, 낱말 카드" },
+              { period: 2, subject: "수학", activity: "1부터 5까지의 수 세고 써보기", notes: "수 8-11쪽, 바둑알" },
+              { period: 3, subject: "봄", activity: "학교 봄 동산 꽃과 나무 찾아보기", notes: "봄 14-17쪽, 돋보기" },
+              { period: 4, subject: "봄", activity: "봄꽃을 관찰하고 색연필로 그리기", notes: "봄 18-19쪽, 12색 색연필" }
+            ]
+          },
+          {
+            dayName: "화요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "기본 자음자 모양 알고 소리내기", notes: "국 16-19쪽" },
+              { period: 2, subject: "수학", activity: "몇째일까요? 순서 나타내기", notes: "수 12-15쪽" },
+              { period: 3, subject: "안전", activity: "계단과 복도 바르게 걷는 규칙", notes: "안전생활 6-9쪽" },
+              { period: 4, subject: "창체", activity: "학급 1인 1역할 정하고 실천하기", notes: "역할표 스티커" }
+            ]
+          },
+          {
+            dayName: "수요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "아무것도 없는 상태 '0' 알아보기", notes: "수 16-17쪽" },
+              { period: 2, subject: "국어", activity: "기본 모음자 모양 탐색하고 쓰기", notes: "국 20-23쪽" },
+              { period: 3, subject: "봄", activity: "봄 노래 부르며 율동 표현하기", notes: "봄 20-21쪽" },
+              { period: 4, subject: "봄", activity: "봄 동산 풍경 모둠 콜라주", notes: "색종이, 풀, 가위" }
+            ]
+          },
+          {
+            dayName: "목요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "자음자와 모음자 합쳐 글자 만들기", notes: "국 24-27쪽, 글자판" },
+              { period: 2, subject: "수학", activity: "수의 순서 알아맞히기 놀이", notes: "수 18-21쪽" },
+              { period: 3, subject: "봄", activity: "봄철 날씨와 사람들의 옷차림", notes: "봄 22-25쪽" },
+              { period: 4, subject: "체육", activity: "친구와 손잡고 기본 체조하기", notes: "운동장/강당" }
+            ]
+          },
+          {
+            dayName: "금요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "그림책 함께 읽고 재미있는 말 찾기", notes: "국 28-31쪽" },
+              { period: 2, subject: "수학", activity: "1 큰 수와 1 작은 수 비교하기", notes: "수 22-25쪽" },
+              { period: 3, subject: "창체", activity: "친구 칭찬 릴레이 발표하기", notes: "칭찬 나무 쪽지" },
+              { period: 4, subject: "안전", activity: "봄철 미세먼지와 황사 대처법", notes: "마스크 착용 실습" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "plan-2",
+        grade: "2학년",
+        title: "2학년 1학기 6주차 (알쏭달쏭 나)",
+        periodRange: "작년 4월 2주차 (04.07~04.11)",
+        days: [
+          {
+            dayName: "월요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "상황에 맞는 목소리 크기로 말하기", notes: "국 34-37쪽" },
+              { period: 2, subject: "수학", activity: "교실 속 여러 가지 모양 찾아보기", notes: "수 28-31쪽" },
+              { period: 3, subject: "봄", activity: "내 몸의 각 부분 명칭과 쓰임새", notes: "봄 36-39쪽" },
+              { period: 4, subject: "봄", activity: "나의 성장 모습 미니북 만들기", notes: "어릴 적 사진 1장" }
+            ]
+          },
+          {
+            dayName: "화요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "삼각형과 사각형의 특징 비교하기", notes: "수 32-35쪽, 점판" },
+              { period: 2, subject: "국어", activity: "자신의 생각이나 느낌 실감나게 표현", notes: "국 38-41쪽" },
+              { period: 3, subject: "봄", activity: "오감으로 봄의 변화 느껴보기", notes: "봄 40-43쪽" },
+              { period: 4, subject: "안전", activity: "신호등 지키기와 안전한 횡단보도", notes: "안전생활 12-15쪽" }
+            ]
+          },
+          {
+            dayName: "수요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "동물이나 사물을 흉내 내는 말 찾기", notes: "국 42-45쪽" },
+              { period: 2, subject: "수학", activity: "동그라미(원)의 모양과 특징 알기", notes: "수 36-39쪽" },
+              { period: 3, subject: "창체", activity: "나의 장점을 담은 보물지도 그리기", notes: "도화지, 싸인펜" },
+              { period: 4, subject: "봄", activity: "봄바람을 이용한 바람개비 돌리기", notes: "수수깡, 핀" }
+            ]
+          },
+          {
+            dayName: "목요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "칠교판 7조각으로 동물 만들기", notes: "수 40-43쪽, 칠교판" },
+              { period: 2, subject: "국어", activity: "문장부호(.,!?)의 쓰임새 익히기", notes: "국 46-49쪽" },
+              { period: 3, subject: "봄", activity: "나를 사랑하는 건강한 생활습관", notes: "봄 44-47쪽" },
+              { period: 4, subject: "체육", activity: "매트 위에서 앞으로 안전하게 구르기", notes: "매트 준비, 편한 체육복" }
+            ]
+          },
+          {
+            dayName: "금요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "운율을 살려 재미있는 동시 낭송", notes: "국 50-53쪽" },
+              { period: 2, subject: "수학", activity: "모양 규칙을 찾아 패턴 꾸미기", notes: "수 44-47쪽" },
+              { period: 3, subject: "창체", activity: "학급 자치 다모임 (우리 반 규칙)", notes: "회의록" },
+              { period: 4, subject: "안전", activity: "야외 체험활동 시 길 잃음 예방", notes: "안전생활 16-19쪽" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "plan-3",
+        grade: "3학년",
+        title: "3학년 1학기 10주차 (함께 사는 우리 고장)",
+        periodRange: "작년 5월 2주차 (05.12~05.16)",
+        days: [
+          {
+            dayName: "월요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "대상의 특징이 드러나게 소개 글 쓰기", notes: "국 88-91쪽" },
+              { period: 2, subject: "수학", activity: "세 자리 수의 덧셈 계산 원리 탐구", notes: "수 64-67쪽, 수모형" },
+              { period: 3, subject: "사회", activity: "우리 고장의 대표적인 중심지 찾기", notes: "사회 42-45쪽, 백지도" },
+              { period: 4, subject: "과학", activity: "동물의 암수에 따른 생김새 비교", notes: "과 50-53쪽, 실험관찰" },
+              { period: 5, subject: "체육", activity: "배턴 주고받으며 이어달리기", notes: "운동장, 배턴" }
+            ]
+          },
+          {
+            dayName: "화요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "세 자리 수의 뺄셈 계산 연습", notes: "수 68-71쪽" },
+              { period: 2, subject: "국어", activity: "문단의 중심 문장과 뒷받침 문장 찾기", notes: "국 92-95쪽" },
+              { period: 3, subject: "사회", activity: "우리 고장의 자랑스러운 문화유산 조사", notes: "사회 46-49쪽" },
+              { period: 4, subject: "음악", activity: "자진모리장단에 맞추어 전래동요 부르기", notes: "음악 28-29쪽, 소고" },
+              { period: 5, subject: "영어", activity: "물건 묻고 답하기 (What's this?)", notes: "영 30-33쪽" }
+            ]
+          },
+          {
+            dayName: "수요일",
+            periods: [
+              { period: 1, subject: "과학", activity: "알을 낳는 동물과 새끼 낳는 동물", notes: "과 54-57쪽" },
+              { period: 2, subject: "수학", activity: "덧셈과 뺄셈 문장제 문제 해결", notes: "수 72-73쪽" },
+              { period: 3, subject: "도덕", activity: "친구의 입장을 배려하는 따뜻한 말", notes: "도덕 34-37쪽" },
+              { period: 4, subject: "미술", activity: "우리 고장의 모습을 담은 입체 지도", notes: "지점토, 우드락" }
+            ]
+          },
+          {
+            dayName: "목요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "중요한 내용을 메모하며 듣기 실습", notes: "국 96-99쪽" },
+              { period: 2, subject: "사회", activity: "우리 고장 알리는 관광 홍보물 제작", notes: "사회 50-53쪽, 색지" },
+              { period: 3, subject: "영어", activity: "단어 따라 읽고 역할 놀이하기", notes: "영 34-35쪽" },
+              { period: 4, subject: "체육", activity: "표적을 맞히는 전략 피구 게임", notes: "소프트 피구공" },
+              { period: 5, subject: "실과", activity: "나의 식습관 점검하고 골고루 먹기", notes: "식품구성자전거 자료" }
+            ]
+          },
+          {
+            dayName: "금요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "덧셈과 뺄셈 단원 평가 및 오답노트", notes: "단원평가지" },
+              { period: 2, subject: "국어", activity: "책을 읽고 감동적인 장면 나누기", notes: "국 100-103쪽" },
+              { period: 3, subject: "과학", activity: "배추흰나비의 한살이 관찰 정리", notes: "실험관찰 28쪽" },
+              { period: 4, subject: "창체", activity: "진로 탐색: 우리 동네 다양한 직업", notes: "진로 활동지" },
+              { period: 5, subject: "창체", activity: "자율 동아리 활동 (보드게임/독서)", notes: "동아리실 이동" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "plan-4",
+        grade: "4학년",
+        title: "4학년 2학기 4주차 (생각을 펼쳐요)",
+        periodRange: "작년 9월 4주차 (09.22~09.26)",
+        days: [
+          {
+            dayName: "월요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "이어질 내용을 상상하여 이야기 쓰기", notes: "국 72-75쪽" },
+              { period: 2, subject: "수학", activity: "분모가 같은 진분수의 덧셈 원리", notes: "수 52-55쪽, 분수막대" },
+              { period: 3, subject: "사회", activity: "저출산 고령화로 인한 사회 변화", notes: "사회 38-41쪽" },
+              { period: 4, subject: "과학", activity: "화산 분출물 모형 실험하기", notes: "과 44-47쪽, 탄산수소나트륨" },
+              { period: 5, subject: "체육", activity: "발야구 수비 포지션과 기본 캐치", notes: "운동장, 베이스" }
+            ]
+          },
+          {
+            dayName: "화요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "대분수의 덧셈 계산 숙달", notes: "수 56-59쪽" },
+              { period: 2, subject: "국어", activity: "글에서 사실과 의견 명확히 구분하기", notes: "국 76-79쪽" },
+              { period: 3, subject: "사회", activity: "인구 문제를 해결하기 위한 정부와 시민의 노력", notes: "사회 42-45쪽" },
+              { period: 4, subject: "영어", activity: "시간을 묻고 답하기 (What time is it?)", notes: "영 44-47쪽" },
+              { period: 5, subject: "음악", activity: "리코더 '할아버지의 낡은 시계' 2중주", notes: "소프라노 리코더" }
+            ]
+          },
+          {
+            dayName: "수요일",
+            periods: [
+              { period: 1, subject: "과학", activity: "지진 발생 시 대피 행동 요령 익히기", notes: "과 48-51쪽, 방재모" },
+              { period: 2, subject: "수학", activity: "분모가 같은 진분수의 뺄셈", notes: "수 60-63쪽" },
+              { period: 3, subject: "도덕", activity: "공정한 세상을 만들기 위한 규칙 준수", notes: "도덕 40-43쪽" },
+              { period: 4, subject: "미술", activity: "화산섬의 신비로운 풍경 수채화", notes: "도화지, 수채물감, 붓" }
+            ]
+          },
+          {
+            dayName: "목요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "주장에 알맞은 타당한 근거 마련하기", notes: "국 80-83쪽" },
+              { period: 2, subject: "수학", activity: "분수의 덧셈과 뺄셈 문장제 해결", notes: "수 64-65쪽" },
+              { period: 3, subject: "영어", activity: "하루 일과 묻는 대화 듣고 말하기", notes: "영 48-49쪽" },
+              { period: 4, subject: "사회", activity: "양성평등 사회를 위한 우리들의 실천", notes: "사회 46-49쪽" },
+              { period: 5, subject: "체육", activity: "팀별 전술을 적용한 발야구 리그전", notes: "발야구공" }
+            ]
+          },
+          {
+            dayName: "금요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "논리적인 주장이 담긴 건의문 완성", notes: "국 84-87쪽" },
+              { period: 2, subject: "과학", activity: "화산과 지진이 우리 생활에 주는 이로움", notes: "과 52-53쪽" },
+              { period: 3, subject: "수학", activity: "분수 연산 단원 진단평가", notes: "학습평가지" },
+              { period: 4, subject: "창체", activity: "학급 독서 토론: 과학 이야기 읽기", notes: "도서실 도서" },
+              { period: 5, subject: "창체", activity: "학급 자치 회의 (칭찬 우체통 결산)", notes: "자치기록장" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "plan-5",
+        grade: "5학년",
+        title: "5학년 1학기 7주차 (조화로운 성장과 탐구)",
+        periodRange: "작년 4월 3주차 (04.14~04.18)",
+        days: [
+          {
+            dayName: "월요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "작품 속 인물의 가치관과 사건 분석", notes: "국 60-63쪽" },
+              { period: 2, subject: "수학", activity: "약수와 배수의 의미와 관계 이해", notes: "수 48-51쪽, 바둑돌" },
+              { period: 3, subject: "사회", activity: "조선 건국과 한양 도읍의 위치적 특징", notes: "사회 40-43쪽, 한양도성도" },
+              { period: 4, subject: "과학", activity: "태양계 행성의 크기와 거리 비교 모형", notes: "과 42-45쪽, 우주 사진 자료" },
+              { period: 5, subject: "실과", activity: "균형 잡힌 나의 하루 밥상 계획", notes: "실과 32-35쪽" },
+              { period: 6, subject: "체육", activity: "배구 언더핸드 패스 기본자세 익히기", notes: "강당, 소프트 배구공" }
+            ]
+          },
+          {
+            dayName: "화요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "공약수와 최대공약수 구하는 방법", notes: "수 52-55쪽" },
+              { period: 2, subject: "국어", activity: "글쓴이의 관점을 파악하며 비판적 읽기", notes: "국 64-67쪽" },
+              { period: 3, subject: "사회", activity: "세종대왕 대의 과학기술(앙부일구, 측우기)", notes: "사회 44-47쪽" },
+              { period: 4, subject: "영어", activity: "길 안내하기 (Where is the library?)", notes: "영 36-39쪽" },
+              { period: 5, subject: "음악", activity: "국악 관악기 소금 바른 운지법과 소리내기", notes: "개인 소금" },
+              { period: 6, subject: "도덕", activity: "갈등을 평화롭게 해결하는 대화 원칙", notes: "도덕 36-39쪽" }
+            ]
+          },
+          {
+            dayName: "수요일",
+            periods: [
+              { period: 1, subject: "과학", activity: "계절에 따라 달라지는 대표 별자리", notes: "과 46-49쪽, 별자리판" },
+              { period: 2, subject: "수학", activity: "공배수와 최소공배수 계산 원리", notes: "수 56-59쪽" },
+              { period: 3, subject: "국어", activity: "주제가 명확한 독서 감상문 작성", notes: "국 68-71쪽" },
+              { period: 4, subject: "미술", activity: "전통 문양을 응용한 에코백 스텐실", notes: "아크릴물감, 스폰지" }
+            ]
+          },
+          {
+            dayName: "목요일",
+            periods: [
+              { period: 1, subject: "수학", activity: "최대공약수와 최소공배수 실생활 문제", notes: "수 60-61쪽" },
+              { period: 2, subject: "사회", activity: "임진왜란의 전개와 조헌, 곽재우 의병", notes: "사회 48-51쪽" },
+              { period: 3, subject: "영어", activity: "위치와 방향 표현 챈트로 익히기", notes: "영 40-41쪽" },
+              { period: 4, subject: "과학", activity: "지구의 자전과 낮과 밤이 생기는 원리", notes: "과 50-53쪽, 지구의, 전등" },
+              { period: 5, subject: "체육", activity: "팀별 배구 패스 랠리 미니 게임", notes: "배구 네트" },
+              { period: 6, subject: "실과", activity: "기초 손바느질로 주머니 만들기", notes: "바늘, 실, 자투리 천" }
+            ]
+          },
+          {
+            dayName: "금요일",
+            periods: [
+              { period: 1, subject: "국어", activity: "뉴스 기사 속 과장·왜곡 표현 가려내기", notes: "국 72-75쪽, 신문 자료" },
+              { period: 2, subject: "수학", activity: "약수와 배수 단원 총괄 평가", notes: "형성평가지" },
+              { period: 3, subject: "사회", activity: "조선 후기 서민 문화(판소리, 민화)의 유행", notes: "사회 52-55쪽" },
+              { period: 4, subject: "창체", activity: "생태 전환 교육: 일회용품 줄이기 서약", notes: "환경 캠페인 피켓" },
+              { period: 5, subject: "창체", activity: "자율 동아리 탐구 프로젝트 발표", notes: "동아리 보고서" }
+            ]
+          }
+        ]
+      }
+    ];
+
+    /* =====================================================================
+       2. Application State & Storage
+       ===================================================================== */
+    let currentSelectedPlanId = "plan-3"; // Default 3rd grade
+    let activeLeftPlan = null;
+    let editableData = {}; // keyed by `dayIdx_periodIdx`
+
+    const STORAGE_KEY = "weekly_sketch_current_editor";
+
+    /* =====================================================================
+       3. Initialization & Event Handlers
+       ===================================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      renderChips(DUMMY_PLANS);
+      loadSelectedPlan(currentSelectedPlanId, false);
+      restoreFromLocalStorage();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      // Search input filtering
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        if (!query) {
+          renderChips(DUMMY_PLANS);
+          return;
+        }
+        const filtered = DUMMY_PLANS.filter(plan => {
+          if (plan.title.toLowerCase().includes(query)) return true;
+          if (plan.grade.toLowerCase().includes(query)) return true;
+          // Search in activities & subjects
+          return plan.days.some(day => 
+            day.periods.some(p => 
+              p.subject.toLowerCase().includes(query) || 
+              p.activity.toLowerCase().includes(query) || 
+              (p.notes && p.notes.toLowerCase().includes(query))
+            )
+          );
+        });
+        renderChips(filtered);
+      });
+
+      // Reset search
+      document.getElementById("resetSearchBtn").addEventListener("click", () => {
+        searchInput.value = "";
+        renderChips(DUMMY_PLANS);
+      });
+
+      // Copy All from Left to Right
+      document.getElementById("copyAllToRightBtn").addEventListener("click", () => {
+        copyAllLeftToRight();
+      });
+
+      // Clear Right Editor
+      document.getElementById("clearEditorBtn").addEventListener("click", () => {
+        if (confirm("올해 작성란을 모두 비우시겠습니까?")) {
+          clearRightEditor();
+          showToast("🗑️ 작성란이 초기화되었습니다.");
+        }
+      });
+
+      // Copy HWP (Rich Table)
+      document.getElementById("copyHwpBtn").addEventListener("click", () => {
+        copyTableForHwp();
+      });
+
+      // Copy Excel (TSV)
+      document.getElementById("copyExcelBtn").addEventListener("click", () => {
+        copyTableForExcel();
+      });
+    }
+
+    /* =====================================================================
+       4. Chips Rendering & Selection
+       ===================================================================== */
+    function renderChips(plans) {
+      const container = document.getElementById("chipsContainer");
+      container.innerHTML = "";
+      if (plans.length === 0) {
+        container.innerHTML = '<span style="font-size:0.85rem; color:var(--text-muted);">검색 결과가 없습니다. 다른 단어로 검색해 보세요.</span>';
+        return;
+      }
+      plans.forEach(plan => {
+        const btn = document.createElement("button");
+        btn.className = `chip-btn ${plan.id === currentSelectedPlanId ? 'active' : ''}`;
+        btn.textContent = `[${plan.grade}] ${plan.title}`;
+        btn.onclick = () => {
+          currentSelectedPlanId = plan.id;
+          renderChips(plans);
+          loadSelectedPlan(plan.id, true);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function loadSelectedPlan(planId, askToFillRight = false) {
+      activeLeftPlan = DUMMY_PLANS.find(p => p.id === planId) || DUMMY_PLANS[0];
+      
+      // Update Meta
+      document.getElementById("leftPlanMeta").textContent = 
+        `${activeLeftPlan.title} | ${activeLeftPlan.periodRange}`;
+
+      // Render Left Side
+      renderLeftPlan(activeLeftPlan);
+
+      // If user specifically clicked a chip and right pane is empty, offer to autofill
+      if (askToFillRight && Object.keys(editableData).length === 0) {
+        copyAllLeftToRight(false);
+      }
+    }
+
+    /* =====================================================================
+       5. Render Left Plan (Reference View with 1-Click Copy Buttons)
+       ===================================================================== */
+    function renderLeftPlan(plan) {
+      const container = document.getElementById("leftPlanContainer");
+      container.innerHTML = "";
+
+      plan.days.forEach((day, dayIdx) => {
+        const dayBlock = document.createElement("div");
+        dayBlock.className = "day-block";
+
+        const dayHeader = document.createElement("div");
+        dayHeader.className = "day-block-header";
+        dayHeader.innerHTML = `
+          <span>${day.dayName}</span>
+          <button class="btn btn-outline btn-sm" onclick="copyDayToRight(${dayIdx})" title="${day.dayName} 하루 전체 복사">
+            👉 ${day.dayName}만 복사
+          </button>
+        `;
+        dayBlock.appendChild(dayHeader);
+
+        const periodList = document.createElement("div");
+        periodList.className = "period-list";
+
+        day.periods.forEach((p, pIdx) => {
+          const item = document.createElement("div");
+          item.className = "period-item";
+          item.innerHTML = `
+            <div class="period-badge">${p.period}교시</div>
+            <div class="period-content">
+              <div class="subject-name">[${escapeHtml(p.subject)}]</div>
+              <div class="activity-text">${escapeHtml(p.activity)}</div>
+              ${p.notes ? `<div class="notes-text">💡 ${escapeHtml(p.notes)}</div>` : ''}
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="copyPeriodToRight(${dayIdx}, ${pIdx})" title="이 교시만 오른쪽에 넣기">
+              👉
+            </button>
+          `;
+          periodList.appendChild(item);
+        });
+
+        dayBlock.appendChild(periodList);
+        container.appendChild(dayBlock);
+      });
+    }
+
+    /* =====================================================================
+       6. Render Right Editor (Interactive & Auto-Saving)
+       ===================================================================== */
+    function renderRightEditor() {
+      const container = document.getElementById("rightPlanContainer");
+      container.innerHTML = "";
+
+      if (!activeLeftPlan) return;
+
+      activeLeftPlan.days.forEach((day, dayIdx) => {
+        const dayBlock = document.createElement("div");
+        dayBlock.className = "day-block";
+
+        const dayHeader = document.createElement("div");
+        dayHeader.className = "day-block-header";
+        dayHeader.innerHTML = `<span>${day.dayName} (올해 작성)</span>`;
+        dayBlock.appendChild(dayHeader);
+
+        const periodList = document.createElement("div");
+        periodList.className = "period-list";
+
+        day.periods.forEach((p, pIdx) => {
+          const key = `${dayIdx}_${pIdx}`;
+          const currentVal = editableData[key] || {
+            subject: "",
+            activity: "",
+            notes: ""
+          };
+
+          const item = document.createElement("div");
+          item.className = "edit-period-item";
+          item.innerHTML = `
+            <div class="edit-row-top">
+              <span class="period-badge">${p.period}교시</span>
+              <input type="text" class="edit-subject-input" 
+                placeholder="과목" 
+                value="${escapeHtml(currentVal.subject)}" 
+                oninput="updateField('${key}', 'subject', this.value)">
+              <input type="text" class="edit-activity-input" 
+                placeholder="단원 및 주요 학습활동..." 
+                value="${escapeHtml(currentVal.activity)}" 
+                oninput="updateField('${key}', 'activity', this.value)">
+            </div>
+            <input type="text" class="edit-notes-input" 
+              placeholder="준비물 및 비고 (선택사항)" 
+              value="${escapeHtml(currentVal.notes || '')}" 
+              oninput="updateField('${key}', 'notes', this.value)">
+          `;
+          periodList.appendChild(item);
+        });
+
+        dayBlock.appendChild(periodList);
+        container.appendChild(dayBlock);
+      });
+
+      updateExportTablePreview();
+    }
+
+    function updateField(key, field, value) {
+      if (!editableData[key]) {
+        editableData[key] = { subject: "", activity: "", notes: "" };
+      }
+      editableData[key][field] = value;
+      saveToLocalStorage();
+      updateExportTablePreview();
+    }
+
+    /* =====================================================================
+       7. Copy Actions: Single Period, Whole Day, All Periods
+       ===================================================================== */
+    function copyPeriodToRight(dayIdx, pIdx) {
+      if (!activeLeftPlan) return;
+      const src = activeLeftPlan.days[dayIdx].periods[pIdx];
+      const key = `${dayIdx}_${pIdx}`;
+      editableData[key] = {
+        subject: src.subject,
+        activity: src.activity,
+        notes: src.notes || ""
+      };
+      saveToLocalStorage();
+      renderRightEditor();
+      showToast(`✅ [${activeLeftPlan.days[dayIdx].dayName} ${src.period}교시] 올해 작성칸에 복사되었습니다.`);
+    }
+
+    function copyDayToRight(dayIdx) {
+      if (!activeLeftPlan) return;
+      const day = activeLeftPlan.days[dayIdx];
+      day.periods.forEach((p, pIdx) => {
+        const key = `${dayIdx}_${pIdx}`;
+        editableData[key] = {
+          subject: p.subject,
+          activity: p.activity,
+          notes: p.notes || ""
+        };
+      });
+      saveToLocalStorage();
+      renderRightEditor();
+      showToast(`✅ [${day.dayName}] 전체 항목이 올해 작성칸에 복사되었습니다.`);
+    }
+
+    function copyAllLeftToRight(notify = true) {
+      if (!activeLeftPlan) return;
+      activeLeftPlan.days.forEach((day, dayIdx) => {
+        day.periods.forEach((p, pIdx) => {
+          const key = `${dayIdx}_${pIdx}`;
+          editableData[key] = {
+            subject: p.subject,
+            activity: p.activity,
+            notes: p.notes || ""
+          };
+        });
+      });
+      saveToLocalStorage();
+      renderRightEditor();
+      if (notify) {
+        showToast("✅ 작년 모든 교시의 내용이 올해 작성란에 불러와졌습니다!");
+      }
+    }
+
+    function clearRightEditor() {
+      editableData = {};
+      saveToLocalStorage();
+      renderRightEditor();
+    }
+
+    /* =====================================================================
+       8. Live Preview Table & Multi-format Clipboard Copying
+       ===================================================================== */
+    function updateExportTablePreview() {
+      const tbody = document.getElementById("exportTableBody");
+      tbody.innerHTML = "";
+
+      if (!activeLeftPlan) return;
+
+      // Find max periods across 5 days (e.g. 4, 5, or 6)
+      let maxPeriods = 0;
+      activeLeftPlan.days.forEach(d => {
+        if (d.periods.length > maxPeriods) maxPeriods = d.periods.length;
+      });
+
+      for (let p = 1; p <= maxPeriods; p++) {
+        const tr = document.createElement("tr");
+
+        const tdPeriod = document.createElement("td");
+        tdPeriod.className = "period-label";
+        tdPeriod.textContent = `${p}교시`;
+        tr.appendChild(tdPeriod);
+
+        for (let d = 0; d < 5; d++) {
+          const td = document.createElement("td");
+          const key = `${d}_${p - 1}`;
+          const item = editableData[key];
+
+          if (item && (item.subject || item.activity)) {
+            let html = `<strong>${escapeHtml(item.subject)}</strong>`;
+            if (item.activity) {
+              html += `<br><span style="font-size:0.78rem;">${escapeHtml(item.activity)}</span>`;
+            }
+            if (item.notes) {
+              html += `<br><span style="font-size:0.72rem; color:#64748b;">(${escapeHtml(item.notes)})</span>`;
+            }
+            td.innerHTML = html;
+          } else {
+            td.innerHTML = '<span style="color:#cbd5e1;">-</span>';
+          }
+          tr.appendChild(td);
+        }
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    // 8-1. HWP / Word / NEIS: Styled HTML Table Copy
+    async function copyTableForHwp() {
+      const title = document.getElementById("curYearTitle").value;
+      const dateRange = document.getElementById("curYearDateRange").value;
+
+      let maxPeriods = 0;
+      activeLeftPlan.days.forEach(d => {
+        if (d.periods.length > maxPeriods) maxPeriods = d.periods.length;
+      });
+
+      // Construct high-compatibility HTML Table with inline styles
+      let html = `
+        <div style="font-family:'맑은 고딕',Gulim,sans-serif; text-align:center;">
+          <h2 style="font-size:16pt; margin:10px 0 4px 0;">${escapeHtml(title)}</h2>
+          <p style="font-size:10pt; color:#555; margin-bottom:12px;">기간: ${escapeHtml(dateRange)}</p>
+          <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; width:100%; border:1px solid #000; text-align:center; font-size:10pt;">
+            <thead>
+              <tr style="background-color:#EBF1F5; font-weight:bold;">
+                <th style="border:1px solid #000; width:12%;">교시</th>
+                <th style="border:1px solid #000; width:17.6%;">월요일</th>
+                <th style="border:1px solid #000; width:17.6%;">화요일</th>
+                <th style="border:1px solid #000; width:17.6%;">수요일</th>
+                <th style="border:1px solid #000; width:17.6%;">목요일</th>
+                <th style="border:1px solid #000; width:17.6%;">금요일</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      // Plain text fallback
+      let plainText = `[${title}]\n기간: ${dateRange}\n\n교시\t월요일\t화요일\t수요일\t목요일\t금요일\n`;
+
+      for (let p = 1; p <= maxPeriods; p++) {
+        html += `<tr><td style="border:1px solid #000; background-color:#F7F9FA; font-weight:bold;">${p}교시</td>`;
+        plainText += `${p}교시\t`;
+
+        for (let d = 0; d < 5; d++) {
+          const key = `${d}_${p - 1}`;
+          const item = editableData[key];
+          if (item && (item.subject || item.activity)) {
+            let cellHtml = `<b>${escapeHtml(item.subject)}</b>`;
+            let cellPlain = item.subject ? `[${item.subject}] ` : "";
+            if (item.activity) {
+              cellHtml += `<br>${escapeHtml(item.activity)}`;
+              cellPlain += item.activity;
+            }
+            if (item.notes) {
+              cellHtml += `<br><span style="font-size:8.5pt; color:#666;">(${escapeHtml(item.notes)})</span>`;
+              cellPlain += ` (${item.notes})`;
+            }
+            html += `<td style="border:1px solid #000; text-align:left; vertical-align:top; padding:6px;">${cellHtml}</td>`;
+            plainText += cellPlain.replace(/\t|\n/g, " ") + (d === 4 ? "" : "\t");
+          } else {
+            html += `<td style="border:1px solid #000; text-align:center; color:#ccc;">-</td>`;
+            plainText += "-" + (d === 4 ? "" : "\t");
+          }
+        }
+        html += `</tr>`;
+        plainText += `\n`;
+      }
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      await writeToClipboard(html, plainText);
+      showToast("📋 한글/나이스용 표가 복사되었습니다! (한글 문서에 Ctrl+V 하세요)");
+    }
+
+    // 8-2. Excel: Clean TSV (Tab-Separated Values) Copy
+    async function copyTableForExcel() {
+      const title = document.getElementById("curYearTitle").value;
+      const dateRange = document.getElementById("curYearDateRange").value;
+
+      let maxPeriods = 0;
+      activeLeftPlan.days.forEach(d => {
+        if (d.periods.length > maxPeriods) maxPeriods = d.periods.length;
+      });
+
+      let tsv = `${title}\t기간: ${dateRange}\n\n`;
+      tsv += `교시\t월요일\t화요일\t수요일\t목요일\t금요일\n`;
+
+      for (let p = 1; p <= maxPeriods; p++) {
+        let row = `${p}교시\t`;
+        for (let d = 0; d < 5; d++) {
+          const key = `${d}_${p - 1}`;
+          const item = editableData[key];
+          let cellText = "";
+          if (item && (item.subject || item.activity)) {
+            cellText = item.subject ? `[${item.subject}] ` : "";
+            if (item.activity) cellText += item.activity;
+            if (item.notes) cellText += ` (${item.notes})`;
+          } else {
+            cellText = "-";
+          }
+          // Remove internal tabs and newlines to preserve clean excel cell
+          row += cellText.replace(/[\t\r\n]+/g, " ");
+          if (d < 4) row += "\t";
+        }
+        tsv += row + "\n";
+      }
+
+      await writeToClipboard(null, tsv);
+      showToast("📑 엑셀용 TSV 표가 복사되었습니다! (엑셀 시트에 Ctrl+V 하세요)");
+    }
+
+    // Cross-browser Clipboard Writer with Fallback
+    async function writeToClipboard(htmlContent, plainText) {
+      if (navigator.clipboard && window.ClipboardItem && htmlContent) {
+        try {
+          const blobHtml = new Blob([htmlContent], { type: "text/html" });
+          const blobText = new Blob([plainText], { type: "text/plain" });
+          const item = new ClipboardItem({
+            "text/html": blobHtml,
+            "text/plain": blobText
+          });
+          await navigator.clipboard.write([item]);
+          return;
+        } catch (err) {
+          console.warn("Modern clipboard API failed, falling back to execCommand", err);
+        }
+      }
+
+      if (navigator.clipboard && !htmlContent) {
+        try {
+          await navigator.clipboard.writeText(plainText);
+          return;
+        } catch (err) {
+          console.warn("Clipboard writeText failed", err);
+        }
+      }
+
+      // Legacy fallback
+      const textarea = document.createElement("textarea");
+      textarea.value = plainText;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+
+    /* =====================================================================
+       9. Local Storage Persistence
+       ===================================================================== */
+    function saveToLocalStorage() {
+      try {
+        const payload = {
+          planId: currentSelectedPlanId,
+          data: editableData,
+          title: document.getElementById("curYearTitle").value,
+          dateRange: document.getElementById("curYearDateRange").value,
+          savedAt: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        document.getElementById("saveIndicator").textContent = `로컬 저장됨 (${payload.savedAt})`;
+      } catch (e) {
+        console.warn("LocalStorage save error", e);
+      }
+    }
+
+    function restoreFromLocalStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          // If fresh start, copy default plan
+          copyAllLeftToRight(false);
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        if (parsed.data) {
+          editableData = parsed.data;
+        }
+        if (parsed.title) {
+          document.getElementById("curYearTitle").value = parsed.title;
+        }
+        if (parsed.dateRange) {
+          document.getElementById("curYearDateRange").value = parsed.dateRange;
+        }
+        if (parsed.savedAt) {
+          document.getElementById("saveIndicator").textContent = `로컬 저장됨 (${parsed.savedAt})`;
+        }
+        renderRightEditor();
+      } catch (e) {
+        console.warn("LocalStorage restore error", e);
+        copyAllLeftToRight(false);
+      }
+    }
+
+    /* =====================================================================
+       10. Mobile Tab Switching Helper
+       ===================================================================== */
+    function switchMobileTab(side) {
+      const leftCol = document.getElementById("leftPanel");
+      const rightCol = document.getElementById("rightPanel");
+      const btnLeft = document.getElementById("tabBtnLeft");
+      const btnRight = document.getElementById("tabBtnRight");
+
+      if (side === "left") {
+        leftCol.classList.add("active");
+        rightCol.classList.remove("active");
+        btnLeft.classList.add("active");
+        btnRight.classList.remove("active");
+      } else {
+        leftCol.classList.remove("active");
+        rightCol.classList.add("active");
+        btnLeft.classList.remove("active");
+        btnRight.classList.add("active");
+      }
+    }
+
+    /* =====================================================================
+       11. Modal Notice & Toast Utilities
+       ===================================================================== */
+    function openCollaborativeNotice() {
+      document.getElementById("noticeModal").classList.add("active");
+    }
+
+    function closeCollaborativeNotice() {
+      document.getElementById("noticeModal").classList.remove("active");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
+
